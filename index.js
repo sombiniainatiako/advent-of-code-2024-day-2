@@ -21,6 +21,21 @@ function countSafeReports(reportListFilePath) {
  */
 function isSafeReport(report) {
     let levels = report.split(' ').map(level => parseInt(level));
+    if(isSafeReportNumberArray(levels)) {
+        return true;
+    }
+    else {
+        let combinations = generateCombinationOfLevels(levels);
+        for(let combination of combinations) {
+            if(isSafeReportNumberArray(combination)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function isSafeReportNumberArray(levels){
     if(levels.length < 1) return false; // No levels to evaluate
     let difference = levels[0] - levels[1];
     if(!checkAdjacentLevelSafety(difference, difference)) return false; // Difference is not within the allowed range
@@ -30,6 +45,15 @@ function isSafeReport(report) {
         if(!checkAdjacentLevelSafety(previousDifference, difference)) return false; // Difference is not within the allowed range
     }
     return true;
+}
+
+function generateCombinationOfLevels(levels){
+    let combinations = [];
+    for(let i = 0; i < levels.length; i++) {
+        let newCombination = levels.slice(0, i).concat(levels.slice(i + 1));
+        combinations.push(newCombination);
+    }
+    return combinations;
 }
 
 function checkAdjacentLevelSafety(previousDifference, currentDifference) {
